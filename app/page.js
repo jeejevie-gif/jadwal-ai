@@ -80,28 +80,28 @@ const FEATURES = [
     label: "Analisis Cepat",
     desc: "Hasil dalam detik",
     detail: "AI menganalisis semua tugasmu dan memberikan hasil lengkap dalam hitungan detik menggunakan Groq — inferensi AI tercepat di dunia.",
-    sample: "1. Baca materi kuliah Algoritma bab 5\n2. Kerjakan latihan soal matematika diskrit\n3. Review catatan sebelum kuis besok",
+    sample: `1. Baca materi kuliah Algoritma bab 5\n2. Kerjakan latihan soal matematika diskrit\n3. Review catatan sebelum kuis besok`,
   },
   {
     icon: "🎯",
     label: "Prioritas Cerdas",
     desc: "Urutan tugas optimal",
     detail: "AI mengurutkan tugasmu berdasarkan deadline, tingkat kesulitan, dan urgensi — sehingga kamu tahu harus mulai dari mana.",
-    sample: "1. Tugas Pemrograman Web deadline Jumat\n2. UTS Kalkulus minggu depan Senin\n3. Presentasi kelompok Kamis\n4. Laporan Praktikum Rabu",
+    sample: `1. Tugas Pemrograman Web deadline Jumat\n2. UTS Kalkulus minggu depan Senin\n3. Presentasi kelompok Kamis\n4. Laporan Praktikum Rabu`,
   },
   {
     icon: "📅",
     label: "Jadwal Mingguan",
     desc: "Senin – Minggu",
     detail: "Dapatkan rekomendasi jadwal belajar lengkap Senin–Minggu, dibagi per sesi pagi, siang, dan malam yang realistis.",
-    sample: "1. Skripsi bab 3 harus selesai minggu ini\n2. Kuis Struktur Data Selasa\n3. Tugas Basis Data dikumpul Kamis\n4. Seminar proposal Jumat pagi",
+    sample: `1. Skripsi bab 3 harus selesai minggu ini\n2. Kuis Struktur Data Selasa\n3. Tugas Basis Data dikumpul Kamis\n4. Seminar proposal Jumat pagi`,
   },
   {
     icon: "🤖",
     label: "Powered by AI",
     desc: "LLaMA 3 via Groq",
     detail: "Menggunakan model LLaMA 3.1 terbaru yang dijalankan di Groq — AI yang memahami konteks mahasiswa Indonesia.",
-    sample: "1. Review 3 jurnal untuk tugas Metodologi Penelitian\n2. Buat slide presentasi Manajemen Proyek\n3. Latihan soal UAS Fisika Dasar\n4. Revisi proposal skripsi sesuai masukan dosen",
+    sample: `1. Review 3 jurnal untuk tugas Metodologi Penelitian\n2. Buat slide presentasi Manajemen Proyek\n3. Latihan soal UAS Fisika Dasar\n4. Revisi proposal skripsi sesuai masukan dosen`,
   },
 ];
 
@@ -115,7 +115,9 @@ export default function Home() {
   const [modal, setModal] = useState(null);
   const formRef = useRef(null);
 
-  const handleFeatureClick = (feature) => setModal(feature);
+  const handleFeatureClick = (feature) => {
+    setModal(feature);
+  };
 
   const handleUseExample = (sample) => {
     setTasks(sample);
@@ -158,18 +160,21 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative overflow-x-hidden" style={{ background: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)" }}>
+      {/* BG blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full blur-3xl" style={{ background: "rgba(139,92,246,0.2)" }} />
         <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full blur-3xl" style={{ background: "rgba(59,130,246,0.2)" }} />
       </div>
 
+      {/* MODAL */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
           onClick={() => setModal(null)}>
           <div className="rounded-2xl p-6 max-w-md w-full relative" style={cardStyle}
             onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setModal(null)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+            <button onClick={() => setModal(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
               <IconClose />
             </button>
             <div className="text-4xl mb-3">{modal.icon}</div>
@@ -180,7 +185,7 @@ export default function Home() {
               <p className="text-gray-300 text-sm whitespace-pre-line">{modal.sample}</p>
             </div>
             <button onClick={() => handleUseExample(modal.sample)}
-              className="w-full py-3 rounded-xl font-semibold text-white text-sm"
+              className="w-full py-3 rounded-xl font-semibold text-white text-sm transition-all"
               style={{ background: "linear-gradient(90deg,#7c3aed,#6366f1)", boxShadow: "0 4px 20px rgba(139,92,246,0.3)" }}>
               ✨ Gunakan contoh ini
             </button>
@@ -189,6 +194,8 @@ export default function Home() {
       )}
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 py-10">
+
+        {/* HEADER */}
         <header className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
             style={{ background: "linear-gradient(135deg,#8b5cf6,#6366f1)", boxShadow: "0 0 30px rgba(139,92,246,0.4)" }}>
@@ -207,12 +214,13 @@ export default function Home() {
           </div>
         </header>
 
+        {/* FEATURE CARDS — clickable */}
         {!result && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
             {FEATURES.map((f, i) => (
               <button key={i} onClick={() => handleFeatureClick(f)}
-                className="rounded-xl p-4 text-center transition-all hover:scale-105 hover:brightness-125"
-                style={{ ...cardStyle, outline: "none", cursor: "pointer" }}>
+                className="rounded-xl p-4 text-center transition-all hover:scale-105 hover:brightness-125 cursor-pointer text-left"
+                style={{ ...cardStyle, outline: "none" }}>
                 <div className="text-3xl mb-2">{f.icon}</div>
                 <p className="text-white text-sm font-semibold">{f.label}</p>
                 <p className="text-gray-400 text-xs mt-1">{f.desc}</p>
@@ -222,6 +230,7 @@ export default function Home() {
           </div>
         )}
 
+        {/* INPUT FORM */}
         {!result && (
           <div ref={formRef} className="rounded-2xl p-6 md:p-8 mb-8" style={cardStyle}>
             <div className="flex items-center gap-3 mb-5">
@@ -247,7 +256,7 @@ export default function Home() {
                 </div>
               )}
               <button type="submit" disabled={loading}
-                className="w-full py-3.5 px-6 rounded-xl font-semibold text-white flex items-center justify-center gap-2 text-sm"
+                className="w-full py-3.5 px-6 rounded-xl font-semibold text-white flex items-center justify-center gap-2 text-sm transition-all"
                 style={{ background: loading ? "rgba(139,92,246,0.5)" : "linear-gradient(90deg,#7c3aed,#6366f1)", boxShadow: "0 4px 20px rgba(139,92,246,0.3)", cursor: loading ? "not-allowed" : "pointer" }}>
                 {loading ? <><IconSpinner /><span>AI sedang menganalisis jadwalmu...</span></> : <><IconBrain /><span>Optimalkan Jadwal Saya</span></>}
               </button>
@@ -255,6 +264,7 @@ export default function Home() {
           </div>
         )}
 
+        {/* LOADING */}
         {loading && (
           <div className="text-center py-12">
             <div className="inline-flex flex-col items-center gap-4">
@@ -269,6 +279,7 @@ export default function Home() {
           </div>
         )}
 
+        {/* RESULTS */}
         {result && !loading && (
           <div className="space-y-6">
             <button onClick={handleReset} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
@@ -278,6 +289,7 @@ export default function Home() {
               Analisis ulang
             </button>
 
+            {/* Beban Kuliah */}
             <div className="rounded-2xl p-6" style={cardStyle}>
               <div className="flex items-center gap-3 mb-5">
                 <div className="p-2 rounded-lg" style={{ background: "rgba(59,130,246,0.2)" }}><IconBrain /></div>
@@ -308,6 +320,7 @@ export default function Home() {
               )}
             </div>
 
+            {/* Prioritas Tugas */}
             {result.prioritas_tugas?.length > 0 && (
               <div className="rounded-2xl p-6" style={cardStyle}>
                 <div className="flex items-center gap-3 mb-5">
@@ -317,7 +330,8 @@ export default function Home() {
                 <div className="space-y-3">
                   {result.prioritas_tugas.map((item, idx) => (
                     <div key={idx} className="flex items-start gap-4 rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-                      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${idx === 0 ? "bg-yellow-500/30 text-yellow-300" : idx === 1 ? "bg-gray-400/20 text-gray-300" : idx === 2 ? "bg-orange-700/30 text-orange-400" : "bg-white/10 text-gray-400"}`}>
+                      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
+                        ${idx === 0 ? "bg-yellow-500/30 text-yellow-300" : idx === 1 ? "bg-gray-400/20 text-gray-300" : idx === 2 ? "bg-orange-700/30 text-orange-400" : "bg-white/10 text-gray-400"}`}>
                         {item.urutan || idx + 1}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -337,6 +351,7 @@ export default function Home() {
               </div>
             )}
 
+            {/* Jadwal Mingguan */}
             {result.jadwal_mingguan?.length > 0 && (
               <div className="rounded-2xl p-6" style={cardStyle}>
                 <div className="flex items-center gap-3 mb-5">
@@ -394,6 +409,7 @@ export default function Home() {
               </div>
             )}
 
+            {/* Motivasi */}
             {result.motivasi && (
               <div className="rounded-2xl p-6 text-center" style={cardStyle}>
                 <div className="text-3xl mb-3">🎓</div>
@@ -403,7 +419,7 @@ export default function Home() {
 
             <div className="text-center pb-8">
               <button onClick={handleReset}
-                className="py-3 px-8 rounded-xl font-semibold text-white text-sm"
+                className="py-3 px-8 rounded-xl font-semibold text-white text-sm transition-all"
                 style={{ background: "linear-gradient(90deg,#7c3aed,#6366f1)", boxShadow: "0 4px 20px rgba(139,92,246,0.3)" }}>
                 🔄 Analisis Jadwal Baru
               </button>
@@ -414,3 +430,7 @@ export default function Home() {
         <footer className="text-center text-xs text-gray-600 mt-8 pb-6">
           AI Schedule Optimizer · Dibuat untuk mahasiswa Indonesia 🇮🇩
         </footer>
+      </div>
+    </div>
+  );
+}
