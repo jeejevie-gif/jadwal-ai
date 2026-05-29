@@ -171,6 +171,24 @@ export default function Home() {
           </div>
         </header>
 
+        {/* ── Feature Stats Bar ── */}
+        {!result && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+            {[
+              { icon: "⚡", label: "Analisis Cepat", desc: "Hasil dalam detik" },
+              { icon: "🎯", label: "Prioritas Cerdas", desc: "Urutan tugas optimal" },
+              { icon: "📅", label: "Jadwal Mingguan", desc: "Senin – Minggu" },
+              { icon: "🤖", label: "Powered by AI", desc: "LLaMA 3 via Groq" },
+            ].map((f, i) => (
+              <div key={i} className="glass-card rounded-xl p-4 text-center hover:bg-white/10 transition-colors">
+                <div className="text-2xl mb-1">{f.icon}</div>
+                <p className="text-white text-xs font-semibold">{f.label}</p>
+                <p className="text-gray-500 text-xs mt-0.5">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* ── Input Form ── */}
         {!result && (
           <div className="glass-card rounded-2xl p-6 md:p-8 mb-8 animate-fade-in-up">
