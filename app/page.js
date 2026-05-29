@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const IconBrain = () => (
   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,6 +45,11 @@ const IconGraduate = () => (
       d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
   </svg>
 );
+const IconClose = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+  </svg>
+);
 
 function UrgencyBadge({ level }) {
   const styles = {
@@ -69,19 +74,35 @@ function LoadBar({ skor }) {
   );
 }
 
-const EXAMPLE_TASKS = `1. Tugas Pemrograman Web - buat REST API dengan Node.js, deadline Jumat
-2. UTS Kalkulus minggu depan Senin, perlu belajar integral dan turunan
-3. Presentasi kelompok Manajemen Proyek hari Kamis (belum mulai)
-4. Laporan Praktikum Fisika harus dikumpul Rabu
-5. Baca 3 jurnal untuk tugas review Metodologi Penelitian
-6. Latihan soal Struktur Data untuk kuis Selasa
-7. Revisi proposal skripsi sesuai masukan dosen pembimbing`;
-
 const FEATURES = [
-  { icon: "⚡", label: "Analisis Cepat", desc: "Hasil dalam detik" },
-  { icon: "🎯", label: "Prioritas Cerdas", desc: "Urutan tugas optimal" },
-  { icon: "📅", label: "Jadwal Mingguan", desc: "Senin – Minggu" },
-  { icon: "🤖", label: "Powered by AI", desc: "LLaMA 3 via Groq" },
+  {
+    icon: "⚡",
+    label: "Analisis Cepat",
+    desc: "Hasil dalam detik",
+    detail: "AI menganalisis semua tugasmu dan memberikan hasil lengkap dalam hitungan detik menggunakan Groq — inferensi AI tercepat di dunia.",
+    sample: "1. Baca materi kuliah Algoritma bab 5\n2. Kerjakan latihan soal matematika diskrit\n3. Review catatan sebelum kuis besok",
+  },
+  {
+    icon: "🎯",
+    label: "Prioritas Cerdas",
+    desc: "Urutan tugas optimal",
+    detail: "AI mengurutkan tugasmu berdasarkan deadline, tingkat kesulitan, dan urgensi — sehingga kamu tahu harus mulai dari mana.",
+    sample: "1. Tugas Pemrograman Web deadline Jumat\n2. UTS Kalkulus minggu depan Senin\n3. Presentasi kelompok Kamis\n4. Laporan Praktikum Rabu",
+  },
+  {
+    icon: "📅",
+    label: "Jadwal Mingguan",
+    desc: "Senin – Minggu",
+    detail: "Dapatkan rekomendasi jadwal belajar lengkap Senin–Minggu, dibagi per sesi pagi, siang, dan malam yang realistis.",
+    sample: "1. Skripsi bab 3 harus selesai minggu ini\n2. Kuis Struktur Data Selasa\n3. Tugas Basis Data dikumpul Kamis\n4. Seminar proposal Jumat pagi",
+  },
+  {
+    icon: "🤖",
+    label: "Powered by AI",
+    desc: "LLaMA 3 via Groq",
+    detail: "Menggunakan model LLaMA 3.1 terbaru yang dijalankan di Groq — AI yang memahami konteks mahasiswa Indonesia.",
+    sample: "1. Review 3 jurnal untuk tugas Metodologi Penelitian\n2. Buat slide presentasi Manajemen Proyek\n3. Latihan soal UAS Fisika Dasar\n4. Revisi proposal skripsi sesuai masukan dosen",
+  },
 ];
 
 const DAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
@@ -91,6 +112,18 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [modal, setModal] = useState(null);
+  const formRef = useRef(null);
+
+  const handleFeatureClick = (feature) => setModal(feature);
+
+  const handleUseExample = (sample) => {
+    setTasks(sample);
+    setModal(null);
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -117,17 +150,45 @@ export default function Home() {
   const bebanColor = result?.beban_kuliah?.level === "Ringan" ? "text-green-400"
     : result?.beban_kuliah?.level === "Sedang" ? "text-yellow-400" : "text-red-400";
 
+  const cardStyle = {
+    background: "rgba(255,255,255,0.07)",
+    border: "1px solid rgba(255,255,255,0.12)",
+    backdropFilter: "blur(12px)",
+  };
+
   return (
     <div className="min-h-screen relative overflow-x-hidden" style={{ background: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)" }}>
-      {/* BG blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full blur-3xl" style={{ background: "rgba(139,92,246,0.2)" }} />
         <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full blur-3xl" style={{ background: "rgba(59,130,246,0.2)" }} />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 py-10">
+      {modal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
+          onClick={() => setModal(null)}>
+          <div className="rounded-2xl p-6 max-w-md w-full relative" style={cardStyle}
+            onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setModal(null)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+              <IconClose />
+            </button>
+            <div className="text-4xl mb-3">{modal.icon}</div>
+            <h3 className="text-xl font-bold text-white mb-2">{modal.label}</h3>
+            <p className="text-gray-300 text-sm leading-relaxed mb-5">{modal.detail}</p>
+            <div className="rounded-xl p-4 mb-5" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
+              <p className="text-xs text-gray-400 mb-2 font-semibold">Contoh tugas:</p>
+              <p className="text-gray-300 text-sm whitespace-pre-line">{modal.sample}</p>
+            </div>
+            <button onClick={() => handleUseExample(modal.sample)}
+              className="w-full py-3 rounded-xl font-semibold text-white text-sm"
+              style={{ background: "linear-gradient(90deg,#7c3aed,#6366f1)", boxShadow: "0 4px 20px rgba(139,92,246,0.3)" }}>
+              ✨ Gunakan contoh ini
+            </button>
+          </div>
+        </div>
+      )}
 
-        {/* HEADER */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 py-10">
         <header className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
             style={{ background: "linear-gradient(135deg,#8b5cf6,#6366f1)", boxShadow: "0 0 30px rgba(139,92,246,0.4)" }}>
@@ -141,29 +202,28 @@ export default function Home() {
             Optimalkan jadwal belajarmu dengan kecerdasan buatan. Masukkan tugas-tugasmu, biarkan AI yang atur strateginya.
           </p>
           <div className="flex items-center justify-center gap-2 mt-3">
-            <span className="w-2 h-2 rounded-full bg-green-400" style={{ animation: "pulse 2s infinite" }} />
-            <span className="text-xs text-gray-500">Powered by Groq · LLaMA 3 8B</span>
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-xs text-gray-500">Powered by Groq · LLaMA 3.1</span>
           </div>
         </header>
 
-        {/* FEATURE CARDS */}
         {!result && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
             {FEATURES.map((f, i) => (
-              <div key={i} className="rounded-xl p-4 text-center transition-all hover:scale-105 cursor-default"
-                style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)" }}>
+              <button key={i} onClick={() => handleFeatureClick(f)}
+                className="rounded-xl p-4 text-center transition-all hover:scale-105 hover:brightness-125"
+                style={{ ...cardStyle, outline: "none", cursor: "pointer" }}>
                 <div className="text-3xl mb-2">{f.icon}</div>
                 <p className="text-white text-sm font-semibold">{f.label}</p>
                 <p className="text-gray-400 text-xs mt-1">{f.desc}</p>
-              </div>
+                <p className="text-purple-400 text-xs mt-2">Klik untuk info →</p>
+              </button>
             ))}
           </div>
         )}
 
-        {/* INPUT FORM */}
         {!result && (
-          <div className="rounded-2xl p-6 md:p-8 mb-8"
-            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)" }}>
+          <div ref={formRef} className="rounded-2xl p-6 md:p-8 mb-8" style={cardStyle}>
             <div className="flex items-center gap-3 mb-5">
               <div className="p-2 rounded-lg" style={{ background: "rgba(139,92,246,0.2)" }}><IconList /></div>
               <div>
@@ -173,20 +233,13 @@ export default function Home() {
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="relative">
-                <textarea
-                  value={tasks}
-                  onChange={(e) => setTasks(e.target.value)}
+                <textarea value={tasks} onChange={(e) => setTasks(e.target.value)}
                   placeholder={"Contoh:\n1. Tugas Pemrograman Web - deadline Jumat\n2. UTS Kalkulus minggu depan\n3. Presentasi kelompok Kamis\n..."}
                   rows={8}
                   className="w-full rounded-xl px-4 py-3 text-white text-sm leading-relaxed resize-none focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", caretColor: "#a78bfa" }}
-                />
+                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", caretColor: "#a78bfa" }} />
                 <div className="absolute bottom-3 right-3 text-xs text-gray-600">{tasks.length} karakter</div>
               </div>
-              <button type="button" onClick={() => setTasks(EXAMPLE_TASKS)}
-                className="text-xs underline underline-offset-2 transition-colors" style={{ color: "#a78bfa" }}>
-                ✨ Isi dengan contoh tugas
-              </button>
               {error && (
                 <div className="flex items-start gap-3 rounded-xl px-4 py-3"
                   style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
@@ -194,7 +247,7 @@ export default function Home() {
                 </div>
               )}
               <button type="submit" disabled={loading}
-                className="w-full py-3.5 px-6 rounded-xl font-semibold text-white flex items-center justify-center gap-2 text-sm transition-all"
+                className="w-full py-3.5 px-6 rounded-xl font-semibold text-white flex items-center justify-center gap-2 text-sm"
                 style={{ background: loading ? "rgba(139,92,246,0.5)" : "linear-gradient(90deg,#7c3aed,#6366f1)", boxShadow: "0 4px 20px rgba(139,92,246,0.3)", cursor: loading ? "not-allowed" : "pointer" }}>
                 {loading ? <><IconSpinner /><span>AI sedang menganalisis jadwalmu...</span></> : <><IconBrain /><span>Optimalkan Jadwal Saya</span></>}
               </button>
@@ -202,7 +255,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* LOADING */}
         {loading && (
           <div className="text-center py-12">
             <div className="inline-flex flex-col items-center gap-4">
@@ -217,7 +269,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* RESULTS */}
         {result && !loading && (
           <div className="space-y-6">
             <button onClick={handleReset} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
@@ -227,8 +278,7 @@ export default function Home() {
               Analisis ulang
             </button>
 
-            {/* Beban Kuliah */}
-            <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)" }}>
+            <div className="rounded-2xl p-6" style={cardStyle}>
               <div className="flex items-center gap-3 mb-5">
                 <div className="p-2 rounded-lg" style={{ background: "rgba(59,130,246,0.2)" }}><IconBrain /></div>
                 <h2 className="text-lg font-semibold text-white">Analisis Beban Kuliah</h2>
@@ -258,19 +308,16 @@ export default function Home() {
               )}
             </div>
 
-            {/* Prioritas Tugas */}
             {result.prioritas_tugas?.length > 0 && (
-              <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)" }}>
+              <div className="rounded-2xl p-6" style={cardStyle}>
                 <div className="flex items-center gap-3 mb-5">
                   <div className="p-2 rounded-lg" style={{ background: "rgba(249,115,22,0.2)" }}><IconList /></div>
                   <h2 className="text-lg font-semibold text-white">Daftar Prioritas Tugas</h2>
                 </div>
                 <div className="space-y-3">
                   {result.prioritas_tugas.map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-4 rounded-xl p-4 transition-colors"
-                      style={{ background: "rgba(255,255,255,0.05)" }}>
-                      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
-                        ${idx === 0 ? "bg-yellow-500/30 text-yellow-300" : idx === 1 ? "bg-gray-400/20 text-gray-300" : idx === 2 ? "bg-orange-700/30 text-orange-400" : "bg-white/10 text-gray-400"}`}>
+                    <div key={idx} className="flex items-start gap-4 rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
+                      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${idx === 0 ? "bg-yellow-500/30 text-yellow-300" : idx === 1 ? "bg-gray-400/20 text-gray-300" : idx === 2 ? "bg-orange-700/30 text-orange-400" : "bg-white/10 text-gray-400"}`}>
                         {item.urutan || idx + 1}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -290,9 +337,8 @@ export default function Home() {
               </div>
             )}
 
-            {/* Jadwal Mingguan */}
             {result.jadwal_mingguan?.length > 0 && (
-              <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)" }}>
+              <div className="rounded-2xl p-6" style={cardStyle}>
                 <div className="flex items-center gap-3 mb-5">
                   <div className="p-2 rounded-lg" style={{ background: "rgba(34,197,94,0.2)" }}><IconCalendar /></div>
                   <h2 className="text-lg font-semibold text-white">Rekomendasi Jadwal Mingguan</h2>
@@ -348,9 +394,8 @@ export default function Home() {
               </div>
             )}
 
-            {/* Motivasi */}
             {result.motivasi && (
-              <div className="rounded-2xl p-6 text-center" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)" }}>
+              <div className="rounded-2xl p-6 text-center" style={cardStyle}>
                 <div className="text-3xl mb-3">🎓</div>
                 <p className="text-gray-200 text-base italic leading-relaxed max-w-2xl mx-auto">"{result.motivasi}"</p>
               </div>
@@ -358,7 +403,7 @@ export default function Home() {
 
             <div className="text-center pb-8">
               <button onClick={handleReset}
-                className="py-3 px-8 rounded-xl font-semibold text-white text-sm transition-all"
+                className="py-3 px-8 rounded-xl font-semibold text-white text-sm"
                 style={{ background: "linear-gradient(90deg,#7c3aed,#6366f1)", boxShadow: "0 4px 20px rgba(139,92,246,0.3)" }}>
                 🔄 Analisis Jadwal Baru
               </button>
@@ -369,7 +414,3 @@ export default function Home() {
         <footer className="text-center text-xs text-gray-600 mt-8 pb-6">
           AI Schedule Optimizer · Dibuat untuk mahasiswa Indonesia 🇮🇩
         </footer>
-      </div>
-    </div>
-  );
-}
